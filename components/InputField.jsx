@@ -1,15 +1,16 @@
 import React from 'react';
 import { Formik } from 'formik';
-import { View, TextInput, Button } from 'react-native';
+import { View, TextInput, Button, Text } from 'react-native';
 
-const InputField = ({handlepress, formSchema}) => (
+const InputField = ({handleGennewpwd, formSchema}) => (
   <View>
     <Formik
       initialValues={{ pwdlen: ''}}
       validationSchema={formSchema}
       onSubmit={(values, { setSubmitting }) => {
         console.log(values)
-        handlepress(values.pwdlen)
+        handleGennewpwd(values.pwdlen)
+        setSubmitting(false)
       }}
     >
       {({
@@ -17,7 +18,6 @@ const InputField = ({handlepress, formSchema}) => (
         errors,
         touched,
         handleChange,
-        handleBlur,
         handleSubmit,
         isSubmitting,
         /* and other goodies */
@@ -31,9 +31,10 @@ const InputField = ({handlepress, formSchema}) => (
             keyboardType='numeric'
             style={{width: 80, height: 40, borderWidth: 1}}
           />
-          {errors.pwdlen && touched.email && errors.pwdlen}
-        
-          <Button title="submit" disabled={isSubmitting} onSubmit={handleSubmit} />
+          <Text>
+          {errors.pwdlen && touched.pwdlen && errors.pwdlen}
+          </Text>
+          <Button title="submit" disabled={isSubmitting} onPress={handleSubmit} />
         </View>
       )}
     </Formik>

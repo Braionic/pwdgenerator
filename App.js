@@ -21,7 +21,7 @@ export default function App() {
     pwdlen: yup
       .number("this is an input field")
       .required("field is required")
-      .min(6, "u need to add a min of 6"),
+      .min(6, "u need to add a min of 6").max(10, "be calming down, your password is too long"),
   });
 
   const handleGennewpwd = (bgt) => {
@@ -54,14 +54,14 @@ export default function App() {
       console.log(pwdvalue);
       //const element = array[i];
     }
-    console.log(bgt);
+   
     setnumber(pwdvalue);
     return pwdvalue;
   };
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <InputField formSchema={formSchema} handlepress={handleGennewpwd} />
+        <InputField formSchema={formSchema} handleGennewpwd={handleGennewpwd} />
         <Text>{number}</Text>
         <StatusBar style="auto" />
       </ScrollView>
