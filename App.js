@@ -2,8 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { Keyboard, TextInput } from "react-native";
 import { Button } from "react-native";
-import uuid from 'react-native-uuid';
-import { nanoid } from "nanoid";
+import uuid from "react-native-uuid";
 import {
   StyleSheet,
   Text,
@@ -17,7 +16,7 @@ import { SafeAreaView, FlatList } from "react-native";
 import { ScrollView } from "react-native";
 import InputField from "./components/InputField";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-
+import Savedpasswords from "./components/Savedpasswords";
 
 export default function App() {
   const [isnumber, setIsnumber] = useState(true);
@@ -75,14 +74,15 @@ export default function App() {
     setSchar("");
     setIsuppercase(false);
     setIsnumber(false);
-  
-    console.log(data)
+
+    console.log(data);
   }
 
   function handleSave() {}
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={{flex: 1}}>
       <SafeAreaView style={styles.container}>
         <View>
           <Text
@@ -282,8 +282,8 @@ export default function App() {
               style={{ backgroundColor: "green", padding: 10 }}
               onPress={() =>
                 setData((oldval) => [
-                  ...oldval,
                   { id: uuid.v4(), data: number, title: "testing" },
+                  ...oldval,
                 ])
               }
             >
@@ -311,29 +311,18 @@ export default function App() {
               {number}
             </Text>
           </View>
-          {data.map((item)=>(
-            <ScrollView>
-
-            
-            <View key={item.id} style={{alignItems: 'center', justifyContent: 'center', padding: 10, borderWidth: 1, borderRadius: 4, marginVertical: 10, marginHorizontal: 10}}>
-            <Text>Title: {item.title}</Text>
-            <Text style={{color: 'red', fontSize: 20}}>{item.data}</Text>
-          </View>
-          </ScrollView>
-          ))
-              
-}
-          
         </View>
+        <ScrollView>
+          <Savedpasswords data={data} />
+        </ScrollView>
       </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    color: "white",
-    paddingVertical: 20,
+  
   },
 });

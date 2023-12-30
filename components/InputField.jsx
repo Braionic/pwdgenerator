@@ -10,6 +10,7 @@ const InputField = ({ handleGennewpwd, formSchema, values, handleChange }) => (
       value={values.pwdlen}
       keyboardType="numeric"
       style={{ width: 150, height: 40, borderWidth: 1, borderRadius: 5 }}
+      
     />
   </View>
 );
