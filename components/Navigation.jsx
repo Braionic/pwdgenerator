@@ -7,7 +7,7 @@ import Storedpassword from "./screens/Storedpassword";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Savedpasswords from "./Savedpasswords";
 import Profile from "./screens/Profile";
-import { MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import Settings from "./screens/Settings";
 
 const Stack = createNativeStackNavigator();
@@ -25,15 +25,15 @@ export default function Navigation() {
       <Tab.Navigator screenOptions={({route})=>({tabBarIcon: ({focused, color, size})=>{
         var iconName = ''
         if(route.name === 'Homestack'){
-            iconName = 'security'
+            iconName = focused? 'shield-checkmark': 'shield-checkmark-outline'
         }else if(route.name === 'profile'){
-            iconName = 'person'
+            iconName = focused? 'md-person-sharp': 'md-person-outline'
         }else if(route.name === 'storedpassword'){
-            iconName = 'book'
-        }else if(route.name === 'settings'){
-            iconName = 'settings'
+            iconName = focused? 'save': 'save-outline'
+        }else if(route.name === 'settings' ){
+            iconName = focused? 'settings': 'settings-outline'
         }
-        return <MaterialIcons name={iconName} size={24} color="black" />
+        return <Ionicons name={iconName} size={24} color="black" />
       }})}>
         <Tab.Screen options={{headerShown: false, tabBarLabel: 'Tools'}} name="Homestack" component={Homestack} />
         <Tab.Screen

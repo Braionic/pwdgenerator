@@ -1,9 +1,10 @@
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
+import { useState, createContext } from "react";
 import { Keyboard, TextInput } from "react-native";
 import { Button } from "react-native";
 import uuid from "react-native-uuid";
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer } from "@react-navigation/native";
+
 import {
   StyleSheet,
   Text,
@@ -20,6 +21,7 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Savedpasswords from "../Savedpasswords";
 import Header from "../Header";
 
+const dataContext = createContext();
 export default function Home() {
   const [isnumber, setIsnumber] = useState(true);
   const [isLowercase, setIslowercase] = useState(true);
@@ -28,7 +30,7 @@ export default function Home() {
   const [myform, setForm] = useState("");
   const [number, setnumber] = useState("");
   const [data, setData] = useState([]);
-
+  const [sliderValue, setSliderValue] = useState(6);
   const formSchema = yup.object({
     pwdlen: yup
       .number("this is an input field")
@@ -57,7 +59,7 @@ export default function Home() {
     if (schar) {
       val += spC;
     }
-    return generatePwd(val, formikValue);
+    return generatePwd(val, sliderValue);
   };
   const generatePwd = (pwdstring, txtval) => {
     let pwdvalue = "";
@@ -76,245 +78,256 @@ export default function Home() {
     setSchar("");
     setIsuppercase(false);
     setIsnumber(false);
-
+    setnumber("");
     console.log(data);
   }
 
-  function handleSave() {}
+  function handleSave() {
+    setData((oldval) => [
+        { id: uuid.v4(), data: number, title: "testing" },
+        ...oldval,
+      ])
+      localStorage.setItem('savedPasswords', JSON.stringify(data));
+  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={{flex: 1}}>
-      <SafeAreaView style={styles.container}>
-        <View>
-          <Header />
-
-          
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-
-              padding: 10,
-            }}
-          >
-            <Text style={{ fontSize: 15 }}>Include Uppercase</Text>
-
-            <BouncyCheckbox
-              fillColor="green"
-              unfillColor="#FFFFFF"
-              ref={(ref) => (bouncyCheckboxRef = ref)}
-              iconStyle={{ borderColor: "red" }}
-              innerIconStyle={{ borderWidth: 2 }}
-              textStyle={{
-                textDecorationLine: "none",
-                color: isuppercase ? "green" : "red",
-              }}
-              isChecked={isuppercase}
-              text={isuppercase ? "Active" : "Not Active"}
-              disableBuiltInState
-              onPress={() => setIsuppercase(!isuppercase)}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              padding: 10,
-            }}
-          >
-            <Text style={{ fontSize: 15 }}>Include Lowercase?</Text>
-
-            <BouncyCheckbox
-              fillColor="green"
-              unfillColor="#FFFFFF"
-              ref={(ref) => (bouncyCheckboxRef = ref)}
-              iconStyle={{ borderColor: isLowercase ? "green" : "red" }}
-              innerIconStyle={{ borderWidth: 2 }}
-              textStyle={{
-                textDecorationLine: "none",
-                color: isLowercase ? "green" : "red",
-              }}
-              isChecked={isLowercase}
-              text={isLowercase ? "Active" : "Not Active"}
-              disableBuiltInState
-              onPress={() => setIslowercase(!isLowercase)}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              padding: 10,
-            }}
-          >
-            <Text style={{ fontSize: 15 }}>Include Special Character</Text>
-
-            <BouncyCheckbox
-              fillColor="green"
-              unfillColor="#FFFFFF"
-              ref={(ref) => (bouncyCheckboxRef = ref)}
-              iconStyle={{ borderColor: "red" }}
-              innerIconStyle={{ borderWidth: 2 }}
-              textStyle={{
-                textDecorationLine: "none",
-                color: schar ? "green" : "red",
-              }}
-              isChecked={schar}
-              text={schar ? "Active" : "Not Active"}
-              disableBuiltInState
-              onPress={() => setSchar(!schar)}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              padding: 20,
-            }}
-          >
-            <Text style={{ fontSize: 15 }}>Include Number</Text>
-
-            <BouncyCheckbox
-              fillColor="green"
-              unfillColor="#FFFFFF"
-              ref={(ref) => (bouncyCheckboxRef = ref)}
-              iconStyle={{ borderColor: "red" }}
-              innerIconStyle={{ borderWidth: 2 }}
-              textStyle={{
-                textDecorationLine: "none",
-                color: isnumber ? "green" : "red",
-              }}
-              isChecked={isnumber}
-              text={isnumber ? "Active" : "Not Active"}
-              disableBuiltInState
-              onPress={() => setIsnumber(!isnumber)}
-            />
-          </View>
-       
-          <View
-            style={{
-            
-              justifyContent: "space-between",
-              marginHorizontal: 20,
-            }}
-          >
-            
-            <Formik
-              initialValues={{ pwdlen: '' }}
-              validationSchema={formSchema}
-              onSubmit={(values, { setSubmitting }) => {
-                console.log(values);
-                handleGennewpwd(values.pwdlen);
-                setSubmitting(false);
-              }}
-            >
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                handleSubmit,
-                isSubmitting,
-                /* and other goodies */
-              }) => (
-                <View>
-                  <InputField
-                    style={styles.input}
-                    formSchema={formSchema}
-                    handleGennewpwd={handleGennewpwd}
-                    handleChange={handleChange}
-                    values={values}
-                  />
-                  <Text style={{ color: "red" }}>
-                    {errors.pwdlen && touched.pwdlen && errors.pwdlen}
-                  </Text>
-
-                  <TouchableOpacity
-                    style={{ backgroundColor: "red", padding: 10 }}
-                    onPress={handleSubmit}
-                    disabled={isSubmitting}
-                  >
-                    <Text
-                      style={{
-                        color: "white",
-                        textAlign: "center",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Generate Password
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </Formik>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              marginVertical: 5,
-            }}
-          >
-            <TouchableOpacity
-              style={{ backgroundColor: "grey", padding: 10, marginRight: 5 }}
-              onPress={handleReset}
-            >
-              <Text
-                style={{
-                  color: "white",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                }}
-              >
-                Reset Pwd
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ backgroundColor: "green", padding: 10 }}
-              onPress={() =>
-                setData((oldval) => [
-                  { id: uuid.v4(), data: number, title: "testing" },
-                  ...oldval,
-                ])
-              }
-            >
-              <Text
-                style={{
-                  color: "white",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                }}
-              >
-                Save Password
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              padding: 20,
-              backgroundColor: "grey",
-              marginHorizontal: 20,
-              borderRadius: 5,
-            }}
-          >
-            <Text>Long press to copy</Text>
-            <Text style={{ fontSize: 25, textAlign: "center", color: "white" }}>
-              {number}
+      <View style={{ flex: 1 }}>
+        <SafeAreaView style={styles.container}>
+          <View>
+            <Header />
+            <Text style={{ fontSize: 10, marginHorizontal: 20 }}>
+              GENERATED PASSWORD
             </Text>
+            <View
+              style={{
+                padding: 15,
+                backgroundColor: "grey",
+                marginHorizontal: 20,
+                borderRadius: 5,
+              }}
+            >
+              <Text>Long press to copy</Text>
+              <Text
+                style={{ fontSize: 25, textAlign: "center", color: "white" }}
+              >
+                {number}
+              </Text>
+            </View>
+            <View>
+              <InputField
+                formSchema={formSchema}
+                handleGennewpwd={handleGennewpwd}
+                sliderValue={sliderValue}
+                setSliderValue={setSliderValue}
+              />
+            </View>
+            <Text
+              style={{ fontSize: 12, marginHorizontal: 20, marginVertical: 5 }}
+            >
+              SETTINGS:
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+
+                padding: 10,
+              }}
+            >
+              <Text style={{ fontSize: 15 }}>Include Uppercase</Text>
+
+              <BouncyCheckbox
+                fillColor="green"
+                unfillColor="#FFFFFF"
+                ref={(ref) => (bouncyCheckboxRef = ref)}
+                iconStyle={{ borderColor: "red" }}
+                innerIconStyle={{ borderWidth: 2 }}
+                textStyle={{
+                  textDecorationLine: "none",
+                  color: isuppercase ? "green" : "red",
+                }}
+                isChecked={isuppercase}
+                text={isuppercase ? "Active" : "Not Active"}
+                disableBuiltInState
+                onPress={() => setIsuppercase(!isuppercase)}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                padding: 10,
+              }}
+            >
+              <Text style={{ fontSize: 15 }}>Include Lowercase?</Text>
+
+              <BouncyCheckbox
+                fillColor="green"
+                unfillColor="#FFFFFF"
+                ref={(ref) => (bouncyCheckboxRef = ref)}
+                iconStyle={{ borderColor: isLowercase ? "green" : "red" }}
+                innerIconStyle={{ borderWidth: 2 }}
+                textStyle={{
+                  textDecorationLine: "none",
+                  color: isLowercase ? "green" : "red",
+                }}
+                isChecked={isLowercase}
+                text={isLowercase ? "Active" : "Not Active"}
+                disableBuiltInState
+                //onPress={() => setIslowercase(!isLowercase)}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                padding: 10,
+              }}
+            >
+              <Text style={{ fontSize: 15 }}>Include Special Character</Text>
+
+              <BouncyCheckbox
+                fillColor="green"
+                unfillColor="#FFFFFF"
+                ref={(ref) => (bouncyCheckboxRef = ref)}
+                iconStyle={{ borderColor: "red" }}
+                innerIconStyle={{ borderWidth: 2 }}
+                textStyle={{
+                  textDecorationLine: "none",
+                  color: schar ? "green" : "red",
+                }}
+                isChecked={schar}
+                text={schar ? "Active" : "Not Active"}
+                disableBuiltInState
+                onPress={() => setSchar(!schar)}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                padding: 20,
+              }}
+            >
+              <Text style={{ fontSize: 15 }}>Include Number</Text>
+
+              <BouncyCheckbox
+                fillColor="green"
+                unfillColor="#FFFFFF"
+                ref={(ref) => (bouncyCheckboxRef = ref)}
+                iconStyle={{ borderColor: "red" }}
+                innerIconStyle={{ borderWidth: 2 }}
+                textStyle={{
+                  textDecorationLine: "none",
+                  color: isnumber ? "green" : "red",
+                }}
+                isChecked={isnumber}
+                text={isnumber ? "Active" : "Not Active"}
+                disableBuiltInState
+                onPress={() => setIsnumber(!isnumber)}
+              />
+            </View>
+
+            <View>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "red",
+                  padding: 15,
+                  marginHorizontal: 20,
+                  borderRadius: 5,
+                }}
+                onPress={() => handleGennewpwd()}
+                // disabled={}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Generate Password
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                marginVertical: 5,
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "grey",
+                  padding: 10,
+                  marginRight: 5,
+                  borderRadius: 5,
+                }}
+                onPress={handleReset}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Reset Pwd
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "green",
+                  padding: 10,
+                  borderRadius: 5,
+                }}
+                onPress={handleSave}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Save Password
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-        <ScrollView>
-          <Savedpasswords data={data} />
-        </ScrollView>
-      </SafeAreaView>
+          <ScrollView>
+            <Savedpasswords data={data} />
+          </ScrollView>
+        </SafeAreaView>
       </View>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-  
-  },
+  container: {},
 });
+
+/*
+<TouchableOpacity
+                      style={{ backgroundColor: "red", padding: 10 }}
+                      onPress={handleSubmit}
+                      disabled={isSubmitting}
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          textAlign: "center",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Generate Password
+                      </Text>
+                    </TouchableOpacity>
+
+                    
+                    
+
+                    */
