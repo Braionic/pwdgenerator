@@ -3,7 +3,7 @@ import React from "react";
 
 export default function Savedpasswords({ data }) {
   return (
-    <ScrollView  keyboardShouldPersistTaps='handled'>
+    <ScrollView  keyboardShouldPersistTaps='handled' style={{height: 300}}>
       {data.map((item) => {
         return (
           <View
