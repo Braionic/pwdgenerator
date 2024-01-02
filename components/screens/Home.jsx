@@ -1,9 +1,10 @@
 import { StatusBar } from "expo-status-bar";
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
 import { Keyboard, TextInput } from "react-native";
 import { Button } from "react-native";
 import uuid from "react-native-uuid";
 import { NavigationContainer } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
   StyleSheet,
@@ -22,7 +23,8 @@ import Savedpasswords from "../Savedpasswords";
 import Header from "../Header";
 
 const dataContext = createContext();
-export default function Home() {
+
+export default function Home({navigation}) {
   const [isnumber, setIsnumber] = useState(true);
   const [isLowercase, setIslowercase] = useState(true);
   const [isuppercase, setIsuppercase] = useState(true);
@@ -31,6 +33,10 @@ export default function Home() {
   const [number, setnumber] = useState("");
   const [data, setData] = useState([]);
   const [sliderValue, setSliderValue] = useState(6);
+
+  useEffect(()=>{
+    navigation.navigate('login')
+  },[])
   const formSchema = yup.object({
     pwdlen: yup
       .number("this is an input field")
@@ -87,9 +93,18 @@ export default function Home() {
         { id: uuid.v4(), data: number, title: "testing" },
         ...oldval,
       ])
-      localStorage.setItem('savedPasswords', JSON.stringify(data));
+      const storeData = async (value) => {
+        try {
+          const jsonValue = JSON.stringify(data);
+          await AsyncStorage.setItem('@savedPasswords', jsonValue);
+          console.log(jsonValue)
+        } catch (e) {
+          // saving error
+        }
+      };
+      storeData(data)
   }
-
+  
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={{ flex: 1 }}>
