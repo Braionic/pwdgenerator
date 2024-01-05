@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { useState, createContext, useEffect } from "react";
+import { useState, createContext, useEffect, useContext } from "react";
 import { Keyboard, TextInput } from "react-native";
 import { Button } from "react-native";
 import uuid from "react-native-uuid";
@@ -21,6 +21,7 @@ import InputField from "../InputField";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Savedpasswords from "../Savedpasswords";
 import Header from "../Header";
+import { UserContext } from "../Authcontext";
 
 const dataContext = createContext();
 
@@ -34,9 +35,8 @@ export default function Home({navigation}) {
   const [data, setData] = useState([]);
   const [sliderValue, setSliderValue] = useState(6);
 
-  useEffect(()=>{
-    navigation.navigate('login')
-  },[])
+  
+  
   const formSchema = yup.object({
     pwdlen: yup
       .number("this is an input field")

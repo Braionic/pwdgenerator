@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Keyboard, TextInput } from "react-native";
 import { Button } from "react-native";
 import uuid from "react-native-uuid";
@@ -20,9 +20,15 @@ import { ScrollView } from "react-native";
 import InputField from "./components/InputField";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Savedpasswords from "./components/Savedpasswords";
+import Authcontext from "./components/Authcontext";
 
 export default function App() {
-  return <Navigation />;
+  
+  return (
+    <Authcontext>
+      <Navigation />
+    </Authcontext>
+  );
 }
 
 const styles = StyleSheet.create({

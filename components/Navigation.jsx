@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Home from "./screens/Home";
@@ -12,14 +12,15 @@ import Settings from "./screens/Settings";
 import Login from "./screens/Login";
 import Signup from "./screens/Signup";
 import Myhome from "./screens/Myhome";
+import { UserContext } from "./Authcontext";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
 export default function Navigation() {
-const [isLoggedin, setIsloggedin] = useState(false)
+  const {isLoggedin} = useContext(UserContext)
 
   function Loginstack(){
+    
     return (
       <Stack.Navigator>
         <Stack.Screen options={{headerShown: false}} name="login" component={Login} />
@@ -78,7 +79,7 @@ const [isLoggedin, setIsloggedin] = useState(false)
   }
   return (
     <NavigationContainer>
-      {false?<MyTabs />: <Loginstack />}
+      {isLoggedin?<MyTabs />: <Loginstack />}
     </NavigationContainer>
   );
 }

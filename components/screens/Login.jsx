@@ -9,16 +9,17 @@ import {
   Keyboard,
   TouchableOpacity,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UserContext } from "../Authcontext";
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState();
   const [error, setError] = useState("");
-
-
+const {setIsloggedin, logindata} = useContext(UserContext)
 
   const handleSignin = () => {
     const signinObj = {
@@ -29,18 +30,32 @@ const Login = ({ navigation }) => {
     axios
       .post("http://192.168.0.112:2000/api/signin", signinObj)
       .then((data) => {
-        if(data.data.msg){
-           return setError(data.data.msg)
-        }else{
-            console.log(data.data.token)
-            navigation.navigate('myhome')
+        if (data.data.msg) {
+          setPassword('')
+          return setError(data.data.msg);
+        } else {
+          console.log(data.data);
+          AsyncStorage.setItem("loginjwt", data.data.token)
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((err) => {
+              console.log(err);
+            })
+            AsyncStorage.setItem("userData", JSON.stringify(data.data.data))
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((err) => {
+              console.log(err);
+            })
+            
+            logindata()
+          setIsloggedin(true)
         }
-        
-        
       })
       .catch((err) => {
         console.log(err);
-        
       });
   };
   return (
@@ -50,7 +65,7 @@ const Login = ({ navigation }) => {
           source={{ uri: "https://i.ibb.co/cxkpqfY/My-project-1-3.jpg" }}
           style={{ width: 150, height: 150, borderRadius: 30, marginTop: 100 }}
         />
-        {error && <Text style={{color: 'black'}}>{error}</Text>}
+        {error && <Text style={{ color: "black" }}>{error}</Text>}
         <KeyboardAvoidingView>
           <View
             style={{
