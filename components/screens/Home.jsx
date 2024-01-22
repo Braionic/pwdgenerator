@@ -4,7 +4,8 @@ import { Keyboard, TextInput } from "react-native";
 import { Button } from "react-native";
 import uuid from "react-native-uuid";
 import { NavigationContainer } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 import {
   StyleSheet,
@@ -12,6 +13,7 @@ import {
   View,
   TouchableOpacity,
   TouchableWithoutFeedback,
+
 } from "react-native";
 import * as yup from "yup";
 import { Formik } from "formik";
@@ -22,10 +24,13 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Savedpasswords from "../Savedpasswords";
 import Header from "../Header";
 import { UserContext } from "../Authcontext";
+import axios from "axios";
+import Clipboard from "@react-native-community/clipboard";
 
-const dataContext = createContext();
+//const dataContext = createContext();
 
-export default function Home({navigation}) {
+export default function Home({ navigation }) {
+  const { userData, setIsSaved } = useContext(UserContext);
   const [isnumber, setIsnumber] = useState(true);
   const [isLowercase, setIslowercase] = useState(true);
   const [isuppercase, setIsuppercase] = useState(true);
@@ -34,9 +39,17 @@ export default function Home({navigation}) {
   const [number, setnumber] = useState("");
   const [data, setData] = useState([]);
   const [sliderValue, setSliderValue] = useState(6);
+ 
+  
+  //show toast
+  const showToast = () => {
+    Toast.show({
+      type: "success",
+      text1: "Password",
+      text2: "Saved 👋",
+    });
+  };
 
-  
-  
   const formSchema = yup.object({
     pwdlen: yup
       .number("this is an input field")
@@ -72,7 +85,7 @@ export default function Home({navigation}) {
     for (let i = 0; i < txtval; i++) {
       let randomIndex = Math.round(Math.random() * pwdstring.length);
       pwdvalue += pwdstring[randomIndex];
-      console.log(pwdvalue);
+      //console.log(pwdvalue);
       //const element = array[i];
     }
 
@@ -85,26 +98,43 @@ export default function Home({navigation}) {
     setIsuppercase(false);
     setIsnumber(false);
     setnumber("");
-    console.log(data);
   }
 
   function handleSave() {
     setData((oldval) => [
-        { id: uuid.v4(), data: number, title: "testing" },
-        ...oldval,
-      ])
-      const storeData = async (value) => {
-        try {
-          const jsonValue = JSON.stringify(data);
-          await AsyncStorage.setItem('@savedPasswords', jsonValue);
-          console.log(jsonValue)
-        } catch (e) {
-          // saving error
+      { id: uuid.v4(), data: number, title: "testing" },
+      ...oldval,
+    ]);
+    const dataObj = {
+      platform: `Password ${data.length+1}`,
+      password: number,
+      id: uuid.v4(),
+      uid: userData._id,
+    };
+    const storeData = async (value) => {
+      try {
+        //const jsonValue = JSON.stringify(data);
+        //await AsyncStorage.setItem("@savedPasswords", jsonValue);
+        //console.log(jsonValue);
+        const mypwd = await axios.post(
+          "http://192.168.0.112:2000/api/savepassword",
+          dataObj
+        );
+        if (number && mypwd) {
+          //console.log(mypwd);
+          showToast();
         }
-      };
-      storeData(data)
+      } catch (e) {
+        // saving error
+        console.log(e);
+      }
+    };
+    storeData(data);
+    setIsSaved((oldval) => {
+      return !oldval;
+    });
   }
-  
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={{ flex: 1 }}>
@@ -125,7 +155,7 @@ export default function Home({navigation}) {
               <Text>Long press to copy</Text>
               <Text
                 style={{ fontSize: 25, textAlign: "center", color: "white" }}
-              >
+              selectable>
                 {number}
               </Text>
             </View>
@@ -275,7 +305,7 @@ export default function Home({navigation}) {
             >
               <TouchableOpacity
                 style={{
-                  backgroundColor: "grey",
+                  backgroundColor: "pink",
                   padding: 10,
                   marginRight: 5,
                   borderRadius: 5,
@@ -284,15 +314,16 @@ export default function Home({navigation}) {
               >
                 <Text
                   style={{
-                    color: "white",
+                    color: "black",
                     textAlign: "center",
                     fontWeight: "bold",
+                
                   }}
                 >
-                  Reset Pwd
+                  Reset Password
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              {number? <TouchableOpacity
                 style={{
                   backgroundColor: "green",
                   padding: 10,
@@ -309,7 +340,26 @@ export default function Home({navigation}) {
                 >
                   Save Password
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity>: <TouchableOpacity
+                style={{
+                  backgroundColor: "green",
+                  padding: 10,
+                  borderRadius: 5,
+                  opacity: 0.5
+                }}
+                onPress={handleSave}
+                disabled
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Save Password
+                </Text>
+              </TouchableOpacity>}
             </View>
           </View>
           <ScrollView>

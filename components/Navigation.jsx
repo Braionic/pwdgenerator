@@ -67,6 +67,7 @@ export default function Navigation() {
           name="storedpassword"
           component={Storedpassword}
           options={{
+            headerTitle: "My Saved Passwords",
             headerBackTitle: "GoBack",
             headerTintColor: "red",
             tabBarLabel: "Vaults",

@@ -19,6 +19,7 @@ const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState();
   const [error, setError] = useState("");
+  const [isPasswordHidden, setIsPasswordHidden] = useState(false)
 const {setIsloggedin, logindata} = useContext(UserContext)
 
   const handleSignin = () => {
@@ -34,17 +35,17 @@ const {setIsloggedin, logindata} = useContext(UserContext)
           setPassword('')
           return setError(data.data.msg);
         } else {
-          console.log(data.data);
+          //console.log(data.data);
           AsyncStorage.setItem("loginjwt", data.data.token)
             .then((data) => {
-              console.log(data);
+              //console.log(data);
             })
             .catch((err) => {
-              console.log(err);
+              //console.log(err);
             })
             AsyncStorage.setItem("userData", JSON.stringify(data.data.data))
             .then((data) => {
-              console.log(data);
+              //console.log(data);
             })
             .catch((err) => {
               console.log(err);
@@ -117,11 +118,13 @@ const {setIsloggedin, logindata} = useContext(UserContext)
                 marginLeft: 3,
                 borderColor: "grey",
               }}
-              secureTextEntry
+              secureTextEntry={isPasswordHidden}
               value={password}
               placeholder="Password"
               onChangeText={(e) => setPassword(e)}
+              vi
             />
+            {isPasswordHidden? <Pressable onPress={(()=> setIsPasswordHidden((oldval)=> !oldval))}><Entypo name="eye-with-line" size={24} color="black" /></Pressable>: <Pressable onPress={(()=> setIsPasswordHidden((oldval)=> !oldval))}><Entypo name="eye" size={24} color="black" /></Pressable>}
           </View>
 
           <Pressable style={{ paddingVertical: 20 }}>

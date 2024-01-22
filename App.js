@@ -21,13 +21,46 @@ import InputField from "./components/InputField";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Savedpasswords from "./components/Savedpasswords";
 import Authcontext from "./components/Authcontext";
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 
 export default function App() {
-  
+
+  const toastConfig = {
+    /*
+      Overwrite 'success' type,
+      by modifying the existing `BaseToast` component
+    */
+    success: (props) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: 'yellow', backgroundColor: 'purple' }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 15,
+          fontWeight: '400',
+          color: 'white'
+        }}
+      />
+    ),
+    error: (props) => (
+      <ErrorToast
+        {...props}
+        text1Style={{
+          fontSize: 17
+        }}
+        text2Style={{
+          fontSize: 15
+        }}
+      />
+    )
+      }
   return (
-    <Authcontext>
-      <Navigation />
-    </Authcontext>
+    <>
+      <Authcontext>
+        <Navigation />
+      </Authcontext>
+      <Toast config={toastConfig} />
+    </>
   );
 }
 

@@ -9,6 +9,7 @@ const Authcontext = ({ children }) => {
   const [error, setError] = useState("");
   const [isLoggedin, setIsloggedin] = useState(false)
   const [userData, setUserdata] = useState('')
+  const [isSaved, setIsSaved] = useState(false)
   
   //check if user is logged in
   useEffect(() => {
@@ -50,7 +51,7 @@ const Authcontext = ({ children }) => {
   
   
   
-  return <UserContext.Provider value={{logindata, handleLogout, isLoggedin, setIsloggedin, userData}}>{children}</UserContext.Provider>;
+  return <UserContext.Provider value={{logindata, handleLogout, isLoggedin, setIsloggedin, userData, isSaved, setIsSaved}}>{children}</UserContext.Provider>;
 };
 
 export default Authcontext;

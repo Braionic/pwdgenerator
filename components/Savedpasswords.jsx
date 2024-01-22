@@ -4,7 +4,7 @@ import React from "react";
 export default function Savedpasswords({ data }) {
   return (
     <ScrollView  keyboardShouldPersistTaps='handled' style={{height: 300}}>
-      {data.map((item) => {
+      {data.map((item, index) => {
         return (
           <View
             key={item.id}
@@ -19,7 +19,7 @@ export default function Savedpasswords({ data }) {
               marginHorizontal: 10,
             }}
           >
-            <Text>Title: {item.title}</Text>
+            <Text>Platform: {`welcome${item.title} ${index+1}`}</Text>
             <Text style={{ color: "red", fontSize: 20 }}>{item.data}</Text>
           </View>
         );
