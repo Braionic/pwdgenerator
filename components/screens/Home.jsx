@@ -25,7 +25,8 @@ import Header from "../Header";
 import { UserContext } from "../Authcontext";
 import axios from "axios";
 import Clipboard from "@react-native-community/clipboard";
-import DropDownPicker from "react-native-dropdown-picker";
+import DropDownPicker from 'react-native-dropdown-picker';
+
 
 //const dataContext = createContext();
 
@@ -39,13 +40,15 @@ export default function Home({ navigation }) {
   const [number, setnumber] = useState("");
   const [data, setData] = useState([]);
   const [sliderValue, setSliderValue] = useState(6);
-
+  
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
-    { label: "Apple", value: "apple" },
-    { label: "Banana", value: "banana" },
+    {label: 'Apple', value: 'apple'},
+    {label: 'Banana', value: 'banana'}
   ]);
+
+  
 
   //show toast
   const showToast = () => {
@@ -143,7 +146,7 @@ export default function Home({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={{ flex: 1, backgroundColor: "white" }}>
+      <View style={{ flex: 1 , backgroundColor: "white"}}>
         <SafeAreaView style={styles.container}>
           <View>
             <Header />
@@ -166,18 +169,13 @@ export default function Home({ navigation }) {
                 {number}
               </Text>
             </View>
-            <View
-              style={{ paddingHorizontal: 15, marginTop: 10, paddingBottom: 30 }}
-            >
-              <InputField />
-            </View>
             <View>
-              <TextInput
-        style={styles.input}
-       
-        value={number}
-        placeholder="useless placeholder"
-      />
+              <InputField
+                formSchema={formSchema}
+                handleGennewpwd={handleGennewpwd}
+                sliderValue={sliderValue}
+                setSliderValue={setSliderValue}
+              />
             </View>
             <Text
               style={{ fontSize: 12, marginHorizontal: 20, marginVertical: 5 }}
@@ -293,7 +291,7 @@ export default function Home({ navigation }) {
                   padding: 15,
                   marginHorizontal: 20,
                   borderRadius: 5,
-                  marginTop: 15,
+                  marginTop: 15
                 }}
                 onPress={() => handleGennewpwd()}
                 // disabled={}
@@ -389,12 +387,6 @@ export default function Home({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {},
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
 });
 
 /*
