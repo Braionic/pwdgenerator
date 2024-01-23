@@ -13,7 +13,6 @@ import {
   View,
   TouchableOpacity,
   TouchableWithoutFeedback,
-
 } from "react-native";
 import * as yup from "yup";
 import { Formik } from "formik";
@@ -26,6 +25,7 @@ import Header from "../Header";
 import { UserContext } from "../Authcontext";
 import axios from "axios";
 import Clipboard from "@react-native-community/clipboard";
+import DropDownPicker from "react-native-dropdown-picker";
 
 //const dataContext = createContext();
 
@@ -39,8 +39,14 @@ export default function Home({ navigation }) {
   const [number, setnumber] = useState("");
   const [data, setData] = useState([]);
   const [sliderValue, setSliderValue] = useState(6);
- 
-  
+
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    { label: "Apple", value: "apple" },
+    { label: "Banana", value: "banana" },
+  ]);
+
   //show toast
   const showToast = () => {
     Toast.show({
@@ -106,7 +112,7 @@ export default function Home({ navigation }) {
       ...oldval,
     ]);
     const dataObj = {
-      platform: `Password ${data.length+1}`,
+      platform: `Password ${data.length + 1}`,
       password: number,
       id: uuid.v4(),
       uid: userData._id,
@@ -137,7 +143,7 @@ export default function Home({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: "white" }}>
         <SafeAreaView style={styles.container}>
           <View>
             <Header />
@@ -146,7 +152,7 @@ export default function Home({ navigation }) {
             </Text>
             <View
               style={{
-                padding: 15,
+                padding: 5,
                 backgroundColor: "grey",
                 marginHorizontal: 20,
                 borderRadius: 5,
@@ -155,17 +161,23 @@ export default function Home({ navigation }) {
               <Text>Long press to copy</Text>
               <Text
                 style={{ fontSize: 25, textAlign: "center", color: "white" }}
-              selectable>
+                selectable
+              >
                 {number}
               </Text>
             </View>
+            <View
+              style={{ paddingHorizontal: 15, marginTop: 10, paddingBottom: 30 }}
+            >
+              <InputField />
+            </View>
             <View>
-              <InputField
-                formSchema={formSchema}
-                handleGennewpwd={handleGennewpwd}
-                sliderValue={sliderValue}
-                setSliderValue={setSliderValue}
-              />
+              <TextInput
+        style={styles.input}
+       
+        value={number}
+        placeholder="useless placeholder"
+      />
             </View>
             <Text
               style={{ fontSize: 12, marginHorizontal: 20, marginVertical: 5 }}
@@ -177,7 +189,7 @@ export default function Home({ navigation }) {
                 flexDirection: "row",
                 justifyContent: "space-between",
 
-                padding: 10,
+                padding: 5,
               }}
             >
               <Text style={{ fontSize: 15 }}>Include Uppercase</Text>
@@ -202,7 +214,7 @@ export default function Home({ navigation }) {
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
-                padding: 10,
+                padding: 5,
               }}
             >
               <Text style={{ fontSize: 15 }}>Include Lowercase?</Text>
@@ -227,7 +239,7 @@ export default function Home({ navigation }) {
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
-                padding: 10,
+                padding: 5,
               }}
             >
               <Text style={{ fontSize: 15 }}>Include Special Character</Text>
@@ -252,7 +264,7 @@ export default function Home({ navigation }) {
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
-                padding: 20,
+                padding: 5,
               }}
             >
               <Text style={{ fontSize: 15 }}>Include Number</Text>
@@ -281,6 +293,7 @@ export default function Home({ navigation }) {
                   padding: 15,
                   marginHorizontal: 20,
                   borderRadius: 5,
+                  marginTop: 15,
                 }}
                 onPress={() => handleGennewpwd()}
                 // disabled={}
@@ -317,49 +330,52 @@ export default function Home({ navigation }) {
                     color: "black",
                     textAlign: "center",
                     fontWeight: "bold",
-                
                   }}
                 >
                   Reset Password
                 </Text>
               </TouchableOpacity>
-              {number? <TouchableOpacity
-                style={{
-                  backgroundColor: "green",
-                  padding: 10,
-                  borderRadius: 5,
-                }}
-                onPress={handleSave}
-              >
-                <Text
+              {number ? (
+                <TouchableOpacity
                   style={{
-                    color: "white",
-                    textAlign: "center",
-                    fontWeight: "bold",
+                    backgroundColor: "green",
+                    padding: 10,
+                    borderRadius: 5,
                   }}
+                  onPress={handleSave}
                 >
-                  Save Password
-                </Text>
-              </TouchableOpacity>: <TouchableOpacity
-                style={{
-                  backgroundColor: "green",
-                  padding: 10,
-                  borderRadius: 5,
-                  opacity: 0.5
-                }}
-                onPress={handleSave}
-                disabled
-              >
-                <Text
+                  <Text
+                    style={{
+                      color: "white",
+                      textAlign: "center",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Save Password
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
                   style={{
-                    color: "white",
-                    textAlign: "center",
-                    fontWeight: "bold",
+                    backgroundColor: "green",
+                    padding: 10,
+                    borderRadius: 5,
+                    opacity: 0.5,
                   }}
+                  onPress={handleSave}
+                  disabled
                 >
-                  Save Password
-                </Text>
-              </TouchableOpacity>}
+                  <Text
+                    style={{
+                      color: "white",
+                      textAlign: "center",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Save Password
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
           <ScrollView>
@@ -373,6 +389,12 @@ export default function Home({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {},
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
 });
 
 /*
